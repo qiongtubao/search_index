@@ -1,8 +1,8 @@
-use crate::schema::field_value::FieldValue;
 use crate::schema::field::Field;
-pub mod term;
-mod field;
+use crate::schema::field_value::FieldValue;
+pub mod field;
 mod field_value;
+pub mod term;
 /*
     Document 数据存储在fields下面
 */
@@ -12,14 +12,12 @@ pub struct Document {
 
 impl Document {
     pub fn new() -> Document {
-        Document {
-            fields: Vec::new(),
-        }
+        Document { fields: Vec::new() }
     }
-    pub fn set(&mut self, field: &Field, text:&String) {
+    pub fn set(&mut self, field: Field, text: &str) {
         self.add(FieldValue {
-            field: (*field).clone(),
-            text: (*text).clone()
+            field: field,
+            text: String::from(text),
         });
     }
     pub fn add(&mut self, field_value: FieldValue) {
