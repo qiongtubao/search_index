@@ -4,18 +4,22 @@ use crate::schema::term::Term;
 use crate::schema::Document;
 use crate::writer::field::FieldWriter;
 use std::collections::HashMap;
+use crate::directory::Directory;
+
 mod field;
 mod postings;
 struct IndexWriter {
     max_doc: usize,
     term_writers: HashMap<Field, FieldWriter>,
+    directory: Directory,
 }
 
 impl IndexWriter {
-    pub fn new() -> IndexWriter {
+    pub fn open(directory: &Directory) -> IndexWriter {
         IndexWriter {
             max_doc: 0,
             term_writers: HashMap::new(),
+            directory: (*directory).clone(),
         }
     }
     pub fn get_field_writer(&mut self, field: &Field) -> &mut FieldWriter {
@@ -44,10 +48,12 @@ mod writer {
     use crate::schema::field::Field;
     use crate::schema::Document;
     use crate::writer::IndexWriter;
+    use crate::directory::Directory;
 
     #[test]
     fn add_doc() {
-        let mut wirter = IndexWriter::new();
+        let directory = Directory::open("toto");
+        let mut wirter = IndexWriter::open(&directory);
         let mut doc = Document::new();
         doc.set(Field("text"), &String::from("toto"));
         wirter.add(doc);
