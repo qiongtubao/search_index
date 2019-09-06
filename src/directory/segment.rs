@@ -3,6 +3,7 @@ use std::fs::File;
 use memmap::{Mmap, Protection};
 use std::rc::Rc;
 use crate::directory::Dir;
+use crate::directory::memory_pointer::MemoryPointer;
 
 #[derive(Clone, Debug)]
 pub struct SegmentId(pub String);
@@ -24,11 +25,8 @@ impl Segment {
             SegmentComponent::POSITIONS => ".pos",
         }
     }
-    fn get_file(&self, component: SegmentComponent) -> Result<File, std::io::Error> {
+    fn get_file<'a>(&'a self, component: SegmentComponent) -> Result<&'a MemoryPointer, std::io::Error> {
         self.directory.get_file(&self.segment_id, component)
     }
-    pub fn open(&self, component: SegmentComponent) ->  Result<Mmap, std::io::Error> {
-        let file = self.get_file(component)?;
-        Mmap::open(&file, Protection::Read)
-    }
 }
+
