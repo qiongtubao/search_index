@@ -1,6 +1,6 @@
 mod segment;
 use std::path::PathBuf;
-use crate::directory::segment::{SegmentId, Segment, SegmentComponent};
+use crate::directory::segment::{SegmentId, Segment, SegmentComponent, generate_segment_name};
 use std::rc::Rc;
 use std::io::Error;
 use crate::directory::file::FileDirectory;
@@ -32,6 +32,9 @@ impl Directory {
         Directory {
             dir: Rc::new(FileDirectory::for_path(path))
         }
+    }
+    pub fn new_segment(&self, ) -> Segment {
+        self.segment(&generate_segment_name())
     }
     fn from<T: Dir + 'static>(directory: T) -> Directory {
         Directory {
