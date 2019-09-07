@@ -7,6 +7,7 @@ pub struct FieldWriter {
     postings: Vec<SimplePostingsWriter>,
     term_index: BTreeMap<String, usize>,
 }
+
 impl FieldWriter {
     pub fn new() -> FieldWriter {
         FieldWriter {

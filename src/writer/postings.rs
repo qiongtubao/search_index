@@ -26,11 +26,14 @@ impl PostingsWriter for SimplePostingsWriter {
 
 impl Flushable for SimplePostingsWriter {
     fn flush<W: Write>(&self, writer: &mut W) -> Result<usize, std::io::Error> {
+        let mut num_bytes_written = 0;
         let num_docs = self.doc_ids.len() as u64;
         writer.write_u64::<NativeEndian>(num_docs);
+        num_bytes_written += 8;
         for &doc_id in self.doc_ids.iter() {
             writer.write_u64::<NativeEndian>(doc_id as u64);
+            num_bytes_written += 8;
         }
-        Ok(1)
+        Ok(num_bytes_written)
     }
 }
