@@ -49,6 +49,9 @@ mod writer {
     use crate::schema::Document;
     use crate::writer::IndexWriter;
     use crate::directory::Directory;
+    use crate::writer::postings::SimplePostingsWriter;
+    use crate::Flushable;
+    use crate::writer::postings::PostingsWriter;
 
     #[test]
     fn add_doc() {
@@ -57,5 +60,17 @@ mod writer {
         let mut doc = Document::new();
         doc.set(Field("text"), &String::from("toto"));
         wirter.add(doc);
+    }
+    #[test]
+    fn test_postings_writer() {
+        let mut postings_writer = SimplePostingsWriter::new();
+        postings_writer.suscribe(1);
+        postings_writer.suscribe(4);
+        postings_writer.suscribe(5);
+        postings_writer.suscribe(17);
+        let mut buffer: Vec<u8> = Vec::new();
+        assert_eq!(buffer.len(), 0);
+        postings_writer.flush(&mut buffer);
+        assert_eq!(buffer.len(), 5 * 8);
     }
 }
