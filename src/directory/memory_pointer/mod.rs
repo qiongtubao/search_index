@@ -1,4 +1,6 @@
-
+/**
+已经作废
+*/
 mod resident;
 mod memory;
 pub trait  MemoryPointer {

@@ -3,7 +3,8 @@ use std::fs::File;
 use memmap::{Mmap, Protection};
 use std::rc::Rc;
 use crate::directory::Dir;
-use crate::directory::memory_pointer::MemoryPointer;
+//use crate::directory::memory_pointer::MemoryPointer;
+use crate::directory::shared_mmap_memory::SharedMmapMemory;
 
 #[derive(Clone, Debug)]
 pub struct SegmentId(pub String);
@@ -25,8 +26,8 @@ impl Segment {
             SegmentComponent::POSITIONS => ".pos",
         }
     }
-    fn get_file<'a>(&'a self, component: SegmentComponent) -> Result<&'a MemoryPointer, std::io::Error> {
-        self.directory.get_file(&self.segment_id, component)
+    fn get_data(&self, component: SegmentComponent) -> Result<SharedMmapMemory, std::io::Error> {
+        self.directory.get_data(&self.segment_id, component)
     }
 }
 

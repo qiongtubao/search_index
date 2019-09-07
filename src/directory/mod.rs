@@ -5,14 +5,16 @@ use std::rc::Rc;
 use std::io::Error;
 use crate::directory::file::FileDirectory;
 use std::fs::File;
-use crate::directory::memory_pointer::MemoryPointer;
+//use crate::directory::memory_pointer::MemoryPointer;
 use crate::directory::mem::MemDirectory;
+use crate::directory::shared_mmap_memory::SharedMmapMemory;
 
+mod shared_mmap_memory;
 mod mem;
 mod file;
 mod memory_pointer;
 pub trait Dir {
-    fn get_file<'a>(&'a self, segment_id: &SegmentId, component: SegmentComponent) -> Result<&'a MemoryPointer, Error>; // {
+    fn get_data(&self, segment_id: &SegmentId, component: SegmentComponent) -> Result<SharedMmapMemory, Error>; // {
 }
 #[derive(Clone)]
 pub struct Directory {
@@ -41,7 +43,7 @@ impl Directory {
     }
 }
 impl Dir for Directory {
-    fn get_file<'a>(&'a self, segment_id: &SegmentId, component: SegmentComponent) -> Result<&'a MemoryPointer, Error> {
-        self.dir.get_file(segment_id, component)
+    fn get_data(&self, segment_id: &SegmentId, component: SegmentComponent) -> Result<SharedMmapMemory, Error> {
+        self.dir.get_data(segment_id, component)
     }
 }
