@@ -1,13 +1,8 @@
 use crate::directory::Directory;
+use crate::serial::FieldCursor;
+use crate::schema::field::Field;
 
-pub struct IndexReader {
+
+pub struct SegmentIndexReader {
     directory: Directory,
-}
-
-impl IndexReader {
-    pub fn open(directory: &Directory) -> IndexReader {
-        IndexReader {
-            directory: (*directory).clone(),
-        }
-    }
 }

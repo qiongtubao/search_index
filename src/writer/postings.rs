@@ -7,7 +7,7 @@ pub trait PostingsWriter {
 }
 
 pub struct SimplePostingsWriter {
-    doc_ids: Vec<DocId>,
+    pub doc_ids: Vec<DocId>,
 }
 impl SimplePostingsWriter {
     pub fn new() -> Self {

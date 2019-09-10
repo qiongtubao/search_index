@@ -4,8 +4,8 @@ use std::collections::BTreeMap;
 use crate::writer::postings::SimplePostingsWriter;
 use super::postings::PostingsWriter;
 pub struct FieldWriter {
-    postings: Vec<SimplePostingsWriter>,
-    term_index: BTreeMap<String, usize>,
+    pub postings: Vec<SimplePostingsWriter>,
+    pub term_index: BTreeMap<String, usize>,
 }
 
 impl FieldWriter {

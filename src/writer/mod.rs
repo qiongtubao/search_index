@@ -5,10 +5,13 @@ use crate::schema::Document;
 use crate::writer::field::FieldWriter;
 use std::collections::HashMap;
 use crate::directory::Directory;
+use crate::writer::closed_index::ClosedIndexWriter;
 
+mod cursor;
+pub mod closed_index;
 mod field;
 mod postings;
-struct IndexWriter {
+pub struct IndexWriter {
     max_doc: usize,
     term_writers: HashMap<Field, FieldWriter>,
     directory: Directory,
@@ -22,7 +25,7 @@ impl IndexWriter {
             directory: (*directory).clone(),
         }
     }
-    pub fn get_field_writer(&mut self, field: &Field) -> &mut FieldWriter {
+    pub fn get_field_writer<'a>(&'a mut self, field: &Field) -> &'a mut FieldWriter {
         if !self.term_writers.contains_key(field) {
             self.term_writers
                 .insert((*field).clone(), FieldWriter::new());
@@ -40,7 +43,12 @@ impl IndexWriter {
         }
         self.max_doc += 1;
     }
-    fn suscribe(&self, term: &Term, doc_id: usize) {}
+    pub fn close(self) -> ClosedIndexWriter {
+        ClosedIndexWriter {
+            index_writer: self,
+        }
+    }
+
 }
 
 #[cfg(test)]
