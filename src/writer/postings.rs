@@ -19,7 +19,10 @@ impl SimplePostingsWriter {
 
 impl PostingsWriter for SimplePostingsWriter {
     fn suscribe(&mut self, doc_id: DocId) {
-        self.doc_ids.push(doc_id);
+        //从小到大排序
+        if self.doc_ids.len() == 0 || self.doc_ids[self.doc_ids.len() -1] < doc_id {
+            self.doc_ids.push(doc_id);
+        }
     }
 }
 

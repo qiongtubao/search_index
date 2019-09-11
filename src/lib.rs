@@ -23,7 +23,7 @@ mod index {
     use crate::writer::IndexWriter;
     use crate::serial::{TermCursor, DocCursor};
     use crate::writer::closed_index::ClosedIndexWriter;
-    use crate::serial::{SerializableSegment,FieldCursor};
+    use crate::serial::{SerializableSegment};
     fn show_doc_cursor<'a, D: DocCursor>(mut doc_cursor: D) {
         loop {
             match doc_cursor.next() {
@@ -36,19 +36,14 @@ mod index {
             }
         }
     }
-        fn show_term_cursor<'a, T: TermCursor<'a>>(mut term_cursor: T) {
-        loop {
-            match term_cursor.next() {
-                Some(term) => {
-                    println!(" {:?}", term);
-                    show_doc_cursor(term_cursor.doc_cursor());
-                },
-                None => {
-                    break;
-                }
-            }
+    fn show_term<'a, T: TermCursor<'a>>(term_cursor: &T) {
+        println!("{:?}", term_cursor.get_term());
+        let doc_cursor = term_cursor.doc_cursor();
+        for doc in doc_cursor {
+            println!("doc({})", doc);
         }
     }
+
     #[test]
     fn test_indexing() {
         let directory = Directory::in_mem();
@@ -56,27 +51,22 @@ mod index {
             let mut index_writer = IndexWriter::open(&directory);
             {
                 let mut doc = Document::new();
-                doc.set(Field("text"), "toto titi");
+                doc.set(Field(1), "a b");
                 index_writer.add(doc);
             }
             {
                 let mut doc = Document::new();
-                doc.set(Field("text"), "titi tata");
+                doc.set(Field(1), "a b c");
                 index_writer.add(doc);
             }
-            let closed_index_writer:  ClosedIndexWriter = index_writer.close();
-            let mut field_cursor = closed_index_writer.field_cursor();
+            let mut closed_index_writer:  ClosedIndexWriter = index_writer.close();
+            let mut term_cursor = closed_index_writer.term_cursor();
 
             loop {
-                match field_cursor.next() {
-                    Some(field) => {
-                        println!(" {:?}", field);
-                        show_term_cursor(field_cursor.term_cursor());
-                    }
-                    None => {
-                        break;
-                    }
+                if !term_cursor.advance() {
+                    break;
                 }
+                show_term(&term_cursor);
             }
 //          assert!(false);
 

@@ -4,45 +4,73 @@ use crate::schema::field::Field;
 use crate::serial::{TermCursor, DocCursor};
 use crate::writer::cursor::ciw_doc::CIWDocCursor;
 use crate::DocId;
+use crate::writer::field::FieldWriter;
+use std::collections::{hash_map};
+use crate::writer::cursor::ciw_form::{FormPostings, CIWFormCursor};
+use crate::schema::term::Term;
 
 pub struct CIWTermCursor<'a> {
-    pub postings: &'a Vec<SimplePostingsWriter>,
-    pub term_it: btree_map::Iter<'a, String, usize>,
-    pub current: Option<(&'a String, &'a usize)>
+    pub  field_it: hash_map::Iter<'a, Field, FieldWriter>,
+    pub  form_it: CIWFormCursor<'a>,
+    pub  current_form_postings: Option<FormPostings<'a>>,
+    pub field: &'a Field,
 }
 
 impl<'a> CIWTermCursor<'a> {
-    fn get_term_option(&self) -> Option<&'a String> {
-        self.current
-            .map(|(first, _)| first)
+    fn next_form(&mut self) -> bool {
+        match self.form_it.next() {
+            Some(form_postings) => {
+                self.current_form_postings = Some(form_postings);
+                return true;
+            },
+            None => {
+                false
+            }
+        }
+    }
+    fn next_field(&mut self) -> bool {
+        match self.field_it.next() {
+            Some((filed, field_writer)) => {
+                self.form_it = CIWFormCursor {
+                    term_it: field_writer.term_index.iter(),
+                    postings_map: &field_writer.postings,
+                };
+                self.field = filed;
+                true
+            },
+            None => false,
+        }
     }
 }
 
-impl<'a> Iterator for CIWTermCursor<'a> {
-    type Item=&'a String;
-    fn next(&mut self) -> Option<&'a String> {
-        self.current = self.term_it.next();
-        self.get_term_option()
-    }
-}
+
 
 impl<'a> TermCursor<'a> for CIWTermCursor<'a> {
-    type TDocCur = CIWDocCursor<'a>;
+    type DocCur = CIWDocCursor<'a>;
 
-    fn get_term(&self) -> &'a String {
-        self.get_term_option().unwrap()
+    fn advance(&mut self) -> bool {
+        if self.next_form() {
+            true
+        }else if self.next_field() {
+            self.advance()
+        }else{
+            false
+        }
+
+    }
+
+    fn get_term(&self) -> Term<'a> {
+        Term {
+            field: self.field.clone(),
+            text: self.current_form_postings.as_ref().unwrap().form,
+        }
     }
 
     fn doc_cursor(&self) -> CIWDocCursor<'a> {
-        let (_, &postings_id) = self.current.unwrap();
-        unsafe {
-            let postings_writer = self.postings.get_unchecked(postings_id);
-            let docs_it = postings_writer.doc_ids.iter();
-            return CIWDocCursor {
-                    docs_it: Box::new(docs_it),
-                    current: None,
-                }
-
+        let result = self.current_form_postings.as_ref().unwrap();
+        CIWDocCursor {
+            docs_it: result.postings.doc_ids.iter(),
+            current: None
         }
     }
 }

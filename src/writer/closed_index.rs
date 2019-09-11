@@ -2,8 +2,10 @@ use crate::writer::IndexWriter;
 use crate::schema::field::Field;
 use crate::writer::field::FieldWriter;
 use std::collections::hash_map;
-use crate::serial::{FieldCursor, SerializableSegment};
-use crate::writer::cursor::ciw_field::CIWFieldCursor;
+use crate::serial::SerializableSegment;
+//use crate::writer::cursor::ciw_field::CIWFieldCursor;
+use crate::writer::cursor::ciw_term::CIWTermCursor;
+use crate::writer::cursor::ciw_form::CIWFormCursor;
 
 
 pub struct ClosedIndexWriter {
@@ -11,14 +13,18 @@ pub struct ClosedIndexWriter {
 }
 
 impl<'a> SerializableSegment<'a> for ClosedIndexWriter {
-    type TFieldCur = CIWFieldCursor<'a>;
-    fn field_cursor(&'a self) -> Self::TFieldCur {
-        let mut field_it = self.index_writer.term_writers.iter();
-        let current: Option<(&'a Field, &'a FieldWriter)> = None;
-
-            CIWFieldCursor {
-                current,
-                field_it,
-            }
+    type TermCur = CIWTermCursor<'a>;
+    fn term_cursor(&'a mut self) -> Self::TermCur {
+        let mut field_it: hash_map::Iter<'a, Field, FieldWriter> = self.index_writer.term_writers.iter();
+        let (field, field_writer) = field_it.next().unwrap();
+        CIWTermCursor {
+            field_it,
+            form_it: CIWFormCursor {
+                term_it: field_writer.term_index.iter(),
+                postings_map: &field_writer.postings,
+            },
+            field,
+            current_form_postings: None
+        }
     }
 }

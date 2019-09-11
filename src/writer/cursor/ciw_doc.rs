@@ -2,7 +2,7 @@ use crate::DocId;
 use crate::serial::DocCursor;
 
 pub struct CIWDocCursor<'a> {
-    pub docs_it: Box<Iterator<Item=&'a DocId> + 'a>,
+    pub docs_it: std::slice::Iter<'a, DocId>,
     pub current: Option<DocId>,
 }
 impl<'a> Iterator for CIWDocCursor<'a> {

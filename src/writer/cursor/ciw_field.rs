@@ -1,7 +1,7 @@
 use crate::writer::field::FieldWriter;
 use crate::schema::field::Field;
 use std::collections::hash_map;
-use crate::serial::{FieldCursor, TermCursor};
+use crate::serial::TermCursor;
 use crate::writer::cursor::ciw_term::CIWTermCursor;
 
 pub struct CIWFieldCursor<'a> {

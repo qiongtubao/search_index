@@ -66,7 +66,7 @@ mod writer {
         let directory = Directory::open("toto");
         let mut wirter = IndexWriter::open(&directory);
         let mut doc = Document::new();
-        doc.set(Field("text"), &String::from("toto"));
+        doc.set(Field(1), &String::from("toto"));
         wirter.add(doc);
     }
     #[test]
