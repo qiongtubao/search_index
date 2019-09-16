@@ -1,17 +1,15 @@
-use crate::DocId;
 use crate::schema::field::Field;
 use crate::schema::term::Term;
+use crate::DocId;
 
-pub trait DocCursor: Iterator<Item=DocId> {
+pub trait DocCursor: Iterator<Item = DocId> {
     fn doc(&self) -> DocId;
     fn len(&self) -> usize;
 }
 
-pub trait TermCursor<'a>{
+pub trait TermCursor<'a> {
     type DocCur: DocCursor;
-    fn advance(&mut self) -> bool;
-    fn get_term(&self) -> Term<'a>;
-    fn doc_cursor(&self) -> Self::DocCur;
+    fn next(&mut self) -> Option<(Term<'a>, Self::DocCur)>;
 }
 
 //pub trait FieldCursor<'a>: Iterator<Item=&'a Field> {

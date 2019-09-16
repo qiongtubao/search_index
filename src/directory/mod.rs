@@ -1,20 +1,24 @@
 mod segment;
-use std::path::PathBuf;
-use crate::directory::segment::{SegmentId, Segment, SegmentComponent, generate_segment_name};
-use std::rc::Rc;
-use std::io::Error;
 use crate::directory::file::FileDirectory;
+use crate::directory::segment::{generate_segment_name, Segment, SegmentComponent, SegmentId};
 use std::fs::File;
+use std::io::Error;
+use std::path::PathBuf;
+use std::rc::Rc;
 //use crate::directory::memory_pointer::MemoryPointer;
 use crate::directory::mem::MemDirectory;
 use crate::directory::shared_mmap_memory::SharedMmapMemory;
 
-mod shared_mmap_memory;
-mod mem;
 mod file;
+mod mem;
 mod memory_pointer;
+mod shared_mmap_memory;
 pub trait Dir {
-    fn get_data(&self, segment_id: &SegmentId, component: SegmentComponent) -> Result<SharedMmapMemory, Error>; // {
+    fn get_data(
+        &self,
+        segment_id: &SegmentId,
+        component: SegmentComponent,
+    ) -> Result<SharedMmapMemory, Error>; // {
 }
 #[derive(Clone)]
 pub struct Directory {
@@ -29,16 +33,14 @@ impl Directory {
     }
     pub fn open(path_str: &str) -> Directory {
         let path = PathBuf::from(path_str);
-        Directory {
-            dir: Rc::new(FileDirectory::for_path(path))
-        }
+        Directory::from(FileDirectory::for_path(path))
     }
-    pub fn new_segment(&self, ) -> Segment {
+    pub fn new_segment(&self) -> Segment {
         self.segment(&generate_segment_name())
     }
     fn from<T: Dir + 'static>(directory: T) -> Directory {
         Directory {
-            dir: Rc::new(directory)
+            dir: Rc::new(directory),
         }
     }
     pub fn in_mem() -> Directory {
@@ -46,7 +48,11 @@ impl Directory {
     }
 }
 impl Dir for Directory {
-    fn get_data(&self, segment_id: &SegmentId, component: SegmentComponent) -> Result<SharedMmapMemory, Error> {
+    fn get_data(
+        &self,
+        segment_id: &SegmentId,
+        component: SegmentComponent,
+    ) -> Result<SharedMmapMemory, Error> {
         self.dir.get_data(segment_id, component)
     }
 }
