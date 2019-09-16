@@ -8,6 +8,7 @@ mod directory;
 mod schema;
 mod writer;
 mod reader;
+mod error;
 pub type DocId = usize;
 
 

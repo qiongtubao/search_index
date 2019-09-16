@@ -4,6 +4,7 @@ use crate::schema::term::Term;
 
 pub trait DocCursor: Iterator<Item=DocId> {
     fn doc(&self) -> DocId;
+    fn len(&self) -> usize;
 }
 
 pub trait TermCursor<'a>{
@@ -21,5 +22,5 @@ pub trait TermCursor<'a>{
 
 pub trait SerializableSegment<'a> {
     type TermCur: TermCursor<'a>; // TODO rename TermCursorImpl
-    fn term_cursor(&'a mut self) -> Self::TermCur;
+    fn term_cursor(&'a self) -> Self::TermCur;
 }

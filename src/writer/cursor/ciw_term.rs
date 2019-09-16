@@ -67,10 +67,11 @@ impl<'a> TermCursor<'a> for CIWTermCursor<'a> {
     }
 
     fn doc_cursor(&self) -> CIWDocCursor<'a> {
-        let result = self.current_form_postings.as_ref().unwrap();
+        let postings = self.current_form_postings.as_ref().unwrap().postings;
         CIWDocCursor {
-            docs_it: result.postings.doc_ids.iter(),
-            current: None
+            docs_it: postings.doc_ids.iter(),
+            current: None,
+            num_docs: postings.doc_ids.len()
         }
     }
 }

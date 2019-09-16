@@ -4,6 +4,7 @@ use crate::serial::DocCursor;
 pub struct CIWDocCursor<'a> {
     pub docs_it: std::slice::Iter<'a, DocId>,
     pub current: Option<DocId>,
+    pub num_docs: usize,
 }
 impl<'a> Iterator for CIWDocCursor<'a> {
     type Item = DocId;
@@ -16,5 +17,9 @@ impl<'a> Iterator for CIWDocCursor<'a> {
 impl<'a> DocCursor for CIWDocCursor<'a> {
     fn doc(&self) -> usize {
         self.current.unwrap()
+    }
+
+    fn len(&self) -> usize {
+        self.num_docs
     }
 }

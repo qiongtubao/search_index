@@ -14,7 +14,7 @@ pub struct ClosedIndexWriter {
 
 impl<'a> SerializableSegment<'a> for ClosedIndexWriter {
     type TermCur = CIWTermCursor<'a>;
-    fn term_cursor(&'a mut self) -> Self::TermCur {
+    fn term_cursor(&'a self) -> Self::TermCur {
         let mut field_it: hash_map::Iter<'a, Field, FieldWriter> = self.index_writer.term_writers.iter();
         let (field, field_writer) = field_it.next().unwrap();
         CIWTermCursor {
