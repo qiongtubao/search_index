@@ -1,6 +1,6 @@
 use std::path::Path;
 
-pub mod directory;
+pub mod lib;
 pub mod error;
 pub mod mmap;
 pub mod watch_event_router;
