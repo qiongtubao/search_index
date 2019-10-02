@@ -6,6 +6,7 @@ extern crate serde_derive;
 extern crate serde_json;
 mod directory;
 mod schema;
+mod tokenizer;
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
