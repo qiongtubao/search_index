@@ -1,5 +1,5 @@
 use crate::schema::lib::field::options::int::IntOptions;
-use crate::schema::lib::field::field_type::FieldType;
+use crate::schema::lib::field::r#type::FieldType;
 use crate::schema::lib::field::options::text::TextOptions;
 
 #[derive(Debug)]

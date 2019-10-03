@@ -1,6 +1,5 @@
 pub mod lib;
-
-
+pub mod document;
 #[cfg(test)]
 mod tests {
     use crate::schema::lib::field::options::text::STRING;

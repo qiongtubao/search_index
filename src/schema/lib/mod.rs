@@ -1,7 +1,7 @@
 pub mod field;
 use std::sync::Arc;
-
-
+pub mod facet;
+pub mod value;
 pub mod inner;
 use inner::InnerSchema;
 use crate::schema::lib::build::SchemaBuilder;
