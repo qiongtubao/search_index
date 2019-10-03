@@ -1,7 +1,7 @@
 use std::sync::{Arc, RwLock};
 use std::collections::HashMap;
 use crate::tokenizer::lib::boxed::BoxedTokenizer;
-
+#[derive(Clone)]
 pub struct TokenizerManager {
     tokenizers: Arc<RwLock<HashMap<String, BoxedTokenizer>>>,
 }
