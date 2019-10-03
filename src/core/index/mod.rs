@@ -4,6 +4,7 @@ use crate::tokenizer::manager::TokenizerManager;
 use crate::core::index::meta::SegmentMetaInventory;
 use crate::core::executor::Executor;
 use crate::directory::managed::ManagedDirectory;
+use crate::directory::lib::Directory;
 
 pub mod meta;
 
@@ -15,3 +16,4 @@ pub struct Index {
     tokenizers: TokenizerManager,
     inventory: SegmentMetaInventory,
 }
+

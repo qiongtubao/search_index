@@ -8,6 +8,8 @@ mod directory;
 mod schema;
 mod tokenizer;
 mod core;
+mod error;
+pub type Result<T> = std::result::Result<T, error::TantivyError>;
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
