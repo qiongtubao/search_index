@@ -8,7 +8,8 @@ pub enum Cardinality {
     #[serde(rename = "multi")]
     MultiValues,
 }
-#[derive(Debug)]
+
+#[derive(Debug, Serialize)]
 pub struct IntOptions {
     indexed: bool,
     fast: Option<Cardinality>,

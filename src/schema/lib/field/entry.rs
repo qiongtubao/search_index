@@ -1,6 +1,8 @@
 use crate::schema::lib::field::options::int::IntOptions;
 use crate::schema::lib::field::r#type::FieldType;
 use crate::schema::lib::field::options::text::TextOptions;
+use serde::{Serialize, Serializer};
+use serde::ser::SerializeStruct;
 
 #[derive(Debug)]
 pub struct FieldEntry {
@@ -35,5 +37,49 @@ impl FieldEntry {
             FieldType::HierarchicalFacet => true,
             FieldType::Bytes => false,
         }
+    }
+}
+/**
+    格式化fieldEntry
+*/
+impl Serialize for FieldEntry {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        //SerializeStruct对象 => Object
+        let mut s = serializer.serialize_struct("field_entry", 3)?;
+        s.serialize_field("name", &self.name)?;
+
+        match self.field_type {
+            FieldType::Str(ref options) => {
+                s.serialize_field("type", "text")?;
+                s.serialize_field("options", options)?;
+            }
+            FieldType::U64(ref options) => {
+                s.serialize_field("type", "u64")?;
+                s.serialize_field("options", options)?;
+            }
+            FieldType::I64(ref options) => {
+                s.serialize_field("type", "i64")?;
+                s.serialize_field("options", options)?;
+            }
+            FieldType::F64(ref options) => {
+                s.serialize_field("type", "f64")?;
+                s.serialize_field("options", options)?;
+            }
+            FieldType::Date(ref options) => {
+                s.serialize_field("type", "date")?;
+                s.serialize_field("options", options)?;
+            }
+            FieldType::HierarchicalFacet => {
+                s.serialize_field("type", "hierarchical_facet")?;
+            }
+            FieldType::Bytes => {
+                s.serialize_field("type", "bytes")?;
+            }
+        }
+
+        s.end()
     }
 }

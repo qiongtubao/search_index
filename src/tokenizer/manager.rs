@@ -18,3 +18,14 @@ impl TokenizerManager {
             .insert(tokenizer_name.to_string(), boxed_tokenizer);
     }
 }
+
+impl Default for TokenizerManager {
+    fn default() -> TokenizerManager {
+        let manager = TokenizerManager {
+            tokenizers: Arc::new(RwLock::new(HashMap::new())),
+        };
+        //这里还没注册 raw,default,en_stem  Tokenizer
+        manager
+    }
+
+}
