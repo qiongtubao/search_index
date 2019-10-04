@@ -1,7 +1,6 @@
 use crate::tokenizer::lib::{Tokenizer, TokenStream};
-use crate::tokenizer::raw::token::Token;
+use crate::tokenizer::Token;
 
-pub mod token;
 #[derive(Clone)]
 pub struct RawTokenizer;
 
@@ -18,7 +17,17 @@ impl<'a> Tokenizer<'a> for RawTokenizer {
     type TokenStreamImpl = RawTokenStream;
 
     fn token_stream(&self, text: &'a str) -> Self::TokenStreamImpl {
-        unimplemented!()
+        let token = Token {
+            offset_from: 0,
+            offset_to: text.len(),
+            position: 0,
+            text: text.to_string(),
+            position_length: 1,
+        };
+        RawTokenStream {
+            token,
+            has_token: true,
+        }
     }
 }
 
