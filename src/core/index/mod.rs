@@ -5,7 +5,7 @@ use crate::core::index::meta::SegmentMetaInventory;
 use crate::core::executor::Executor;
 use crate::directory::managed::ManagedDirectory;
 use crate::directory::lib::Directory;
-
+use crate::Result;
 pub mod meta;
 
 #[derive(Clone)]
@@ -17,3 +17,6 @@ pub struct Index {
     inventory: SegmentMetaInventory,
 }
 
+impl Index {
+
+}

@@ -16,8 +16,10 @@ impl<T> DirectoryClone for T
     }
 }
 
-
-pub trait Directory: DirectoryClone + fmt::Debug {
+/**
+    'static 是在 Managed::wrap  Box::new() 导致要用'static
+*/
+pub trait Directory: DirectoryClone + fmt::Debug + 'static {
     //读取小文件用
     fn atomic_read(&self, path: &Path) -> Result<Vec<u8>, OpenReadError>;
     fn atomic_write(&mut self, path: &Path, data: &[u8]) -> io::Result<()>;
