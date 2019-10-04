@@ -1,6 +1,8 @@
 use std::sync::{Arc, RwLock};
 use std::collections::HashMap;
 use crate::tokenizer::lib::boxed::BoxedTokenizer;
+use crate::tokenizer::raw::RawTokenizer;
+
 #[derive(Clone)]
 pub struct TokenizerManager {
     tokenizers: Arc<RwLock<HashMap<String, BoxedTokenizer>>>,
@@ -25,6 +27,7 @@ impl Default for TokenizerManager {
             tokenizers: Arc::new(RwLock::new(HashMap::new())),
         };
         //这里还没注册 raw,default,en_stem  Tokenizer
+        manager.register("raw", RawTokenizer);
         manager
     }
 
