@@ -1,6 +1,7 @@
 use crate::schema::lib::facet::Facet;
 
 pub type DateTime = chrono::DateTime<chrono::Utc>;
+#[derive(Debug)]
 pub enum Value {
     /// The str type is used for any text information.
     Str(String),

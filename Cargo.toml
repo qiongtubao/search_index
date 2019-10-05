@@ -18,3 +18,5 @@ scoped-pool = "1.0"
 uuid = { version = "0.7.2", features = ["v4", "serde"] }
 census = "0.2"
 rust-stemmers = "1.1"
+crossbeam = "0.7"
+smallvec = "0.6"
