@@ -7,6 +7,7 @@ use crate::directory::managed::ManagedDirectory;
 use crate::directory::lib::Directory;
 use crate::Result;
 use std::borrow::BorrowMut;
+use crate::core::segment::updater::save_new_metas;
 
 pub mod meta;
 
@@ -31,6 +32,12 @@ impl Index {
             executor: Arc::new(Executor::single_thread()),
             inventory,
         })
+    }
+    fn from_directory(mut directory: ManagedDirectory, schema: Schema) -> Result<Index> {
+        //保存meta信息
+        save_new_metas(schema.clone(), directory.borrow_mut())?;
+        let metas = IndexMeta::with_schema(schema);
+        Index::create_from_metas(directory, &metas, Default::default())
     }
 
 }

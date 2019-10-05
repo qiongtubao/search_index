@@ -44,3 +44,13 @@ pub struct IndexMeta {
     pub payload: Option<String>,
 }
 
+impl IndexMeta {
+    pub fn with_schema(schema: Schema) -> IndexMeta {
+        IndexMeta {
+            segments: vec![],
+            schema,
+            opstamp: 0u64,
+            payload: None,
+        }
+    }
+}

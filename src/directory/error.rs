@@ -24,3 +24,15 @@ pub struct IOError {
     path: Option<PathBuf>,
     err: io::Error,
 }
+
+impl Into<io::Error> for IOError {
+    fn into(self) -> io::Error {
+        self.err
+    }
+}
+
+impl From<io::Error> for IOError {
+    fn from(err: io::Error) -> IOError {
+        IOError { path: None, err }
+    }
+}

@@ -1,7 +1,7 @@
 use crate::directory::lib::Directory;
 use std::sync::{RwLock, Arc};
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 use crate::Result;
 use crate::directory::MANAGED_FILEPATH;
 use crate::directory::error::OpenReadError;
@@ -58,5 +58,19 @@ impl Clone for ManagedDirectory {
             directory: self.directory.box_clone(),
             meta_informations: Arc::clone(&self.meta_informations),
         }
+    }
+}
+
+impl Directory for ManagedDirectory {
+    fn atomic_read(&self, path: &Path) -> std::result::Result<Vec<u8>, OpenReadError> {
+        unimplemented!()
+    }
+
+    fn atomic_write(&mut self, path: &Path, data: &[u8]) -> std::io::Result<()> {
+        unimplemented!()
+    }
+
+    fn exists(&self, path: &Path) -> bool {
+        unimplemented!()
     }
 }
