@@ -4,7 +4,7 @@ use serde::Serializer;
 
 #[derive(Clone)]
 pub struct SegmentMeta {
-    tracked: TrackedObject<InnerSegmentMeta>,
+    pub tracked: TrackedObject<InnerSegmentMeta>,
 }
 
 impl serde::Serialize for SegmentMeta {

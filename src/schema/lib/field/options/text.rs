@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use crate::schema::lib::field::options::index_record::IndexRecordOption;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TextOptions {
     indexing: Option<TextFieldIndexing>,
     stored: bool, //是否保存
@@ -13,7 +13,7 @@ impl TextOptions {
 
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TextFieldIndexing {
     record: IndexRecordOption,
     tokenizer: Cow<'static, str>,

@@ -9,7 +9,7 @@ pub enum Cardinality {
     MultiValues,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct IntOptions {
     indexed: bool,
     fast: Option<Cardinality>,

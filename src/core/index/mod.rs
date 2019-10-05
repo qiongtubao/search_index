@@ -8,9 +8,12 @@ use crate::directory::lib::Directory;
 use crate::Result;
 use std::borrow::BorrowMut;
 use crate::core::segment::updater::save_new_metas;
+use crate::directory::META_FILEPATH;
+use crate::error::DataCorruption;
+
 
 pub mod meta;
-
+pub mod untracked_index_meta;
 #[derive(Clone)]
 pub struct Index {
     directory: ManagedDirectory,
@@ -18,6 +21,18 @@ pub struct Index {
     executor: Arc<Executor>,
     tokenizers: TokenizerManager,
     inventory: SegmentMetaInventory,
+}
+
+fn load_metas(directory: &dyn Directory, inventory: &SegmentMetaInventory) -> Result<IndexMeta> {
+    let meta_data = directory.atomic_read(&META_FILEPATH)?;
+    let meta_string = String::from_utf8_lossy(&meta_data);
+    IndexMeta::deserialize(&meta_string, &inventory).map_err(|e| {
+        DataCorruption::new(
+            META_FILEPATH.to_path_buf(),
+            format!("Meta file cannot be deserialized. {:?}.", e)
+        )
+    }).map_err(From::from)
+
 }
 
 impl Index {
@@ -38,6 +53,17 @@ impl Index {
         save_new_metas(schema.clone(), directory.borrow_mut())?;
         let metas = IndexMeta::with_schema(schema);
         Index::create_from_metas(directory, &metas, Default::default())
+    }
+    pub fn create<Dir: Directory>(dir: Dir, schema: Schema) -> Result<Index> {
+        //创建managed文件夹
+        let directory = ManagedDirectory::wrap(dir)?;
+        Index::from_directory(directory, schema)
+    }
+    pub fn open<D: Directory>(directory: D) -> Result<Index> {
+        let directory = ManagedDirectory::wrap(directory)?;
+        let inventory = Default::default();
+        let metas = load_metas(&directory, &inventory)?;
+        Index::create_from_metas(directory, &metas, inventory)
     }
 
 }

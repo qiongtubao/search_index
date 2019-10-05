@@ -2,6 +2,7 @@ use crate::core::segment::id::SegmentId;
 use census::{Inventory};
 use crate::core::segment::meta::SegmentMeta;
 use crate::schema::lib::Schema;
+use crate::core::index::untracked_index_meta::UntrackedIndexMeta;
 
 #[derive(Clone, Default)]
 pub struct SegmentMetaInventory {
@@ -16,6 +17,14 @@ pub struct InnerSegmentMeta {
     segment_id: SegmentId,
     max_doc: u32,
     deletes: Option<DeleteMeta>,
+}
+
+impl InnerSegmentMeta {
+    pub fn track(self,  inventory: &SegmentMetaInventory)-> SegmentMeta {
+        SegmentMeta {
+            tracked: inventory.inventory.track(self)
+        }
+    }
 }
 
 
@@ -52,5 +61,12 @@ impl IndexMeta {
             opstamp: 0u64,
             payload: None,
         }
+    }
+    pub(crate) fn deserialize(
+        meta_json: &str,
+        inventory: &SegmentMetaInventory,
+    ) -> serde_json::Result<IndexMeta> {
+        let untracked_meta_json: UntrackedIndexMeta = serde_json::from_str(meta_json)?;
+        Ok(untracked_meta_json.track(inventory))
     }
 }

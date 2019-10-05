@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::directory::error::IOError;
+use crate::directory::error::{IOError, OpenReadError};
 use std::io;
 
 //use crate::directory::error::LockError;
@@ -51,5 +51,14 @@ impl From<serde_json::Error> for TantivyError {
     fn from(error: serde_json::Error) -> TantivyError {
         let io_err = io::Error::from(error);
         TantivyError::IOError(io_err.into())
+    }
+}
+
+impl From<OpenReadError> for TantivyError {
+    fn from(error: OpenReadError) -> TantivyError {
+        match error {
+            OpenReadError::FileDoesNotExist(filepath) => TantivyError::PathDoesNotExist(filepath),
+            OpenReadError::IOError(io_error) => TantivyError::IOError(io_error),
+        }
     }
 }

@@ -9,8 +9,8 @@ use crate::schema::lib::field::options::int::IntOptions;
 
 #[derive(Default)]
 pub struct SchemaBuilder {
-    fields: Vec<FieldEntry>,
-    fields_map: HashMap<String, Field>,
+    pub fields: Vec<FieldEntry>,
+    pub fields_map: HashMap<String, Field>,
 }
 
 impl SchemaBuilder {
