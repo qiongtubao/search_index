@@ -6,6 +6,7 @@ use crate::tokenizer::simple::SimpleTokenizer;
 use crate::tokenizer::lib::Tokenizer;
 use crate::tokenizer::filter::lower_caser::LowerCaser;
 use crate::tokenizer::filter::remove_long::RemoveLongFilter;
+use crate::tokenizer::filter::stemmer::{Stemmer, Language};
 
 #[derive(Clone)]
 pub struct TokenizerManager {
@@ -38,13 +39,13 @@ impl Default for TokenizerManager {
                 .filter(RemoveLongFilter::limit(40))
                 .filter(LowerCaser),
         );
-//        manager.register(
-//            "en_stem",
-//            SimpleTokenizer
-//                .filter(RemoveLongFilter::limit(40))
-//                .filter(LowerCaser)
-//                .filter(Stemmer::new(Language::English)),
-//        );
+        manager.register(
+            "en_stem",
+            SimpleTokenizer
+                .filter(RemoveLongFilter::limit(40))
+                .filter(LowerCaser)
+                .filter(Stemmer::new(Language::English)),
+        );
         manager
     }
 
