@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::directory::error::{IOError, OpenReadError};
+use crate::directory::error::{IOError, OpenReadError, LockError};
 use std::io;
 
 //use crate::directory::error::LockError;
@@ -21,7 +21,7 @@ pub enum TantivyError {
     PathDoesNotExist(PathBuf),
     FileAlreadyExists(PathBuf),
     IndexAlreadyExists,
-//    LockFailure(LockError, Option<String>),
+    LockFailure(LockError, Option<String>),
     IOError(IOError),
     DataCorruption(DataCorruption),
     Poisoned,

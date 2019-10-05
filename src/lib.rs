@@ -9,6 +9,7 @@ mod schema;
 mod tokenizer;
 mod core;
 mod error;
+mod writer;
 pub type Result<T> = std::result::Result<T, error::TantivyError>;
 #[cfg(test)]
 mod tests {

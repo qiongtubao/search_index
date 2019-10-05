@@ -9,7 +9,9 @@ use crate::Result;
 use std::borrow::BorrowMut;
 use crate::core::segment::updater::save_new_metas;
 use crate::directory::META_FILEPATH;
-use crate::error::DataCorruption;
+use crate::error::{DataCorruption, TantivyError};
+use crate::writer::IndexWriter;
+use crate::directory::error::INDEX_WRITER_LOCK;
 
 
 pub mod meta;
@@ -65,5 +67,26 @@ impl Index {
         let metas = load_metas(&directory, &inventory)?;
         Index::create_from_metas(directory, &metas, inventory)
     }
-
+    pub fn writer_with_num_threads (
+        &self,
+        num_threads: usize,
+        overall_heap_size_in_bytes: usize,
+    ) -> Result<IndexWriter> {
+        let directory_lock = self.directory.acquire_lock(&INDEX_WRITER_LOCK).map_err(|err| {
+            TantivyError::LockFailure(
+                err, Some("Failed to acquire index lock. If you are using\
+                         a regular directory, this means there is already an \
+                         `IndexWriter` working on this `Directory`, in this process \
+                         or in a different process."
+                              .to_string(),)
+            )
+        })?;
+        let heap_size_in_bytes_per_thread = overall_heap_size_in_bytes / num_threads;
+        IndexWriter::new(
+            self,
+            num_threads,
+            heap_size_in_bytes_per_thread,
+            directory_lock,
+        )
+    }
 }

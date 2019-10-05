@@ -4,9 +4,11 @@ use std::collections::HashSet;
 use std::path::{PathBuf, Path};
 use crate::Result;
 use crate::directory::MANAGED_FILEPATH;
-use crate::directory::error::OpenReadError;
+use crate::directory::error::{OpenReadError, LockError};
 use crate::error::DataCorruption;
 use std::io::Write;
+use crate::directory::lib::lock::{Lock, DirectoryLock};
+
 #[derive(Debug, Default)]
 struct MetaInformation {
     managed_paths: HashSet<PathBuf>,
@@ -100,5 +102,9 @@ impl Directory for ManagedDirectory {
 
     fn exists(&self, path: &Path) -> bool {
         self.directory.exists(path)
+    }
+
+    fn acquire_lock(&self, lock: &Lock) -> std::result::Result<DirectoryLock, LockError> {
+        self.directory.acquire_lock(lock)
     }
 }

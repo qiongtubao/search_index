@@ -1,5 +1,8 @@
 use std::path::PathBuf;
 use std::io;
+use once_cell::sync::Lazy;
+use crate::directory::lib::lock::Lock;
+
 /**
     打开文件夹错误
 */
@@ -36,3 +39,13 @@ impl From<io::Error> for IOError {
         IOError { path: None, err }
     }
 }
+#[derive(Debug)]
+pub enum LockError {
+    LockBusy,
+    IOError(io::Error),
+}
+
+pub static INDEX_WRITER_LOCK: Lazy<Lock> = Lazy::new(|| Lock {
+    filepath: PathBuf::from(".tantivy-writer.lock"),
+    is_blocking: false,
+});
