@@ -2,7 +2,8 @@ pub mod lib;
 pub mod manager;
 pub mod raw;
 pub mod simple;
-
+pub mod chain;
+pub mod filter;
 
 pub struct Token {
     /// Offset (byte index) of the first character of the token.

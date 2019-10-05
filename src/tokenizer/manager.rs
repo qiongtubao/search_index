@@ -2,6 +2,10 @@ use std::sync::{Arc, RwLock};
 use std::collections::HashMap;
 use crate::tokenizer::lib::boxed::BoxedTokenizer;
 use crate::tokenizer::raw::RawTokenizer;
+use crate::tokenizer::simple::SimpleTokenizer;
+use crate::tokenizer::lib::Tokenizer;
+use crate::tokenizer::filter::lower_caser::LowerCaser;
+use crate::tokenizer::filter::remove_long::RemoveLongFilter;
 
 #[derive(Clone)]
 pub struct TokenizerManager {
@@ -28,6 +32,19 @@ impl Default for TokenizerManager {
         };
         //这里还没注册 raw,default,en_stem  Tokenizer
         manager.register("raw", RawTokenizer);
+        manager.register(
+            "default",
+            SimpleTokenizer
+                .filter(RemoveLongFilter::limit(40))
+                .filter(LowerCaser),
+        );
+//        manager.register(
+//            "en_stem",
+//            SimpleTokenizer
+//                .filter(RemoveLongFilter::limit(40))
+//                .filter(LowerCaser)
+//                .filter(Stemmer::new(Language::English)),
+//        );
         manager
     }
 
